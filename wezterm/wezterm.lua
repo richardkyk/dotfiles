@@ -178,6 +178,7 @@ config.tab_bar_at_bottom = true
 config.tab_max_width = 32
 config.use_fancy_tab_bar = false
 config.show_new_tab_button_in_tab_bar = false
+
 local function tab_title(tab_info)
 	local title = tab_info.tab_title
 	-- if the tab title is explicitly set, take that
@@ -189,9 +190,9 @@ local function tab_title(tab_info)
 	return tab_info.active_pane.title
 end
 
-wezterm.on("format-tab-title", function(tab, tabs, panes, conf, hover, max_width)
-	local background = scheme_def.background
-	local foreground = scheme_def.foreground
+wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, _max_width)
+	local tab_background = scheme_def.foreground
+	local tab_foreground = scheme_def.background
 
 	local title = tab_title(tab)
 
@@ -203,14 +204,17 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, conf, hover, max_width
 	end
 
 	if tab.is_active then
-		background = scheme_def.tab_bar.active_tab.background
-		foreground = scheme_def.tab_bar.active_tab.foreground
+		tab_background = scheme_def.tab_bar.active_tab.bg_color
+		tab_foreground = scheme_def.tab_bar.active_tab.fg_color
 	end
 
 	return {
-		{ Background = { Color = background } },
-		{ Foreground = { Color = foreground } },
-		{ Text = " " .. (tab.tab_index + 1) .. ": " .. title .. " " },
+		{ Background = { Color = tab_background } },
+		{ Foreground = { Color = tab_foreground } },
+		{ Text = " " .. (tab.tab_index + 1) .. " " },
+		{ Background = { Color = scheme_def.background } },
+		{ Foreground = { Color = scheme_def.foreground } },
+		{ Text = " " .. title .. " " },
 	}
 end)
 
