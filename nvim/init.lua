@@ -792,7 +792,7 @@ require('lazy').setup({
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
           --  completions whenever it has completion options available.
-          ['<C-Space>'] = cmp.mapping.complete {},
+          ['<C-Space>'] = cmp.mapping.complete(),
 
           -- Think of <c-l> as moving to the right of your snippet expansion.
           --  So if you have a snippet that's like:
@@ -825,6 +825,9 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+        },
+        performance = {
+          debounce = 200,
         },
       }
 
@@ -911,22 +914,30 @@ require('lazy').setup({
     -- Calls `require('slimline').setup({})`
     'sschleemilch/slimline.nvim',
     event = 'VimEnter',
-    opts = {
-      style = 'bg',
-      spaces = {
-        components = '',
-        left = '',
-        right = '',
-      },
-      sep = {
-        hide = {
-          first = true,
-          last = true,
+    config = function()
+      require('slimline').setup {
+        style = 'bg',
+        spaces = {
+          components = ' ',
+          left = '',
+          right = '',
         },
-        left = '',
-        right = ' ',
-      },
-    },
+        sep = {
+          hide = {
+            first = true,
+            last = true,
+          },
+          left = '',
+          right = '',
+        },
+      }
+      vim.cmd 'hi Slimline guibg=#313244'
+      vim.cmd 'hi SlimlinePrimarySep guibg=#313244'
+      vim.cmd 'hi SlimlineSecondarySep guibg=#313244'
+
+      vim.cmd 'hi SlimlinePrimary guibg=#cdd6f4'
+      vim.cmd 'hi SlimlineSecondary guibg=#585b70 guifg=#cdd6f4'
+    end,
   },
 
   {
