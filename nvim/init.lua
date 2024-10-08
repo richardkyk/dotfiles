@@ -87,6 +87,7 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
+vim.g.loaded_netrwPlugin = 0
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -900,6 +901,33 @@ require('lazy').setup({
   },
 
   { 'tpope/vim-surround' },
+  {
+    'supermaven-inc/supermaven-nvim',
+    config = function()
+      require('supermaven-nvim').setup {}
+    end,
+  },
+  {
+    -- Calls `require('slimline').setup({})`
+    'sschleemilch/slimline.nvim',
+    event = 'VimEnter',
+    opts = {
+      style = 'bg',
+      spaces = {
+        components = '',
+        left = '',
+        right = '',
+      },
+      sep = {
+        hide = {
+          first = true,
+          last = true,
+        },
+        left = '',
+        right = ' ',
+      },
+    },
+  },
 
   {
     'OlegGulevskyy/better-ts-errors.nvim',
