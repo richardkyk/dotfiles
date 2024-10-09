@@ -751,8 +751,8 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
-      'luckasRanarison/tailwind-tools.nvim',
       'onsails/lspkind-nvim',
+      'luckasRanarison/tailwind-tools.nvim',
     },
     config = function()
       -- See `:help cmp`
@@ -912,18 +912,6 @@ require('lazy').setup({
     end,
   },
 
-  -- tailwind-tools.lua
-  {
-    'luckasRanarison/tailwind-tools.nvim',
-    name = 'tailwind-tools',
-    build = ':UpdateRemotePlugins',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-telescope/telescope.nvim', -- optional
-      'neovim/nvim-lspconfig', -- optional
-    },
-    opts = {}, -- your configuration
-  },
   { 'tpope/vim-surround' },
   {
     'supermaven-inc/supermaven-nvim',
@@ -1049,6 +1037,8 @@ require('lazy').setup({
         'c',
         'diff',
         'html',
+        'css',
+        'tsx',
         'lua',
         'luadoc',
         'markdown',

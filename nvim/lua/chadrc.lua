@@ -8,11 +8,12 @@ M.ui = {
   statusline = { enabled = false },
   cmp = {
     style = 'atom',
+    format_colors = {
+      tailwind = true, -- will work for css lsp too
+      icon = '󱓻',
+    },
   },
   tabufline = {
-    enabled = false,
-  },
-  colorify = {
     enabled = false,
   },
 }
