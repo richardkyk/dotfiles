@@ -211,7 +211,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-vim.g.base46_cache = vim.fn.stdpath 'data' .. '/base46_cache/'
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -623,6 +622,7 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
         --
+        --
 
         lua_ls = {
           -- cmd = {...},
@@ -655,7 +655,6 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
@@ -671,6 +670,17 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'luckasRanarison/tailwind-tools.nvim',
+    name = 'tailwind-tools',
+    build = ':UpdateRemotePlugins',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-telescope/telescope.nvim', -- optional
+      'neovim/nvim-lspconfig', -- optional
+    },
+    opts = {}, -- your configuration
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -751,8 +761,8 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
-      'onsails/lspkind-nvim',
       'luckasRanarison/tailwind-tools.nvim',
+      'onsails/lspkind-nvim',
     },
     config = function()
       -- See `:help cmp`
@@ -797,6 +807,7 @@ require('lazy').setup({
           --  Generally you don't need this, because nvim-cmp will display
           --  completions whenever it has completion options available.
           ['<C-Space>'] = cmp.mapping.complete(),
+          ['<C-y>'] = cmp.mapping.complete(),
 
           -- Think of <c-l> as moving to the right of your snippet expansion.
           --  So if you have a snippet that's like:
@@ -840,11 +851,23 @@ require('lazy').setup({
         },
       }
 
-      options = vim.tbl_deep_extend('force', options, require 'nvchad.cmp')
       cmp.setup(options)
     end,
   },
 
+  { -- You can easily change to a different colorscheme.
+    -- Change the name of the colorscheme plugin below, and then
+    -- change the command in the config to whatever the name of that colorscheme is.
+    --
+    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000, -- Make sure to load this before all the other start plugins.
+    init = function()
+      -- Load the colorscheme here.
+      vim.cmd.colorscheme 'catppuccin'
+    end,
+  },
   -- { -- You can easily change to a different colorscheme.
   --   -- Change the name of the colorscheme plugin below, and then
   --   -- change the command in the config to whatever the name of that colorscheme is.
@@ -860,6 +883,7 @@ require('lazy').setup({
   --
   --     -- You can configure highlights by doing something like:
   --     vim.cmd.hi 'Comment gui=none'
+  --     -- vim.cmd 'highlight FoldColumn guibg=#1e1e2e'
   --   end,
   -- },
 
@@ -896,20 +920,6 @@ require('lazy').setup({
         return { 'treesitter', 'indent' }
       end,
     },
-  },
-  {
-    'nvchad/ui',
-    config = function()
-      require 'nvchad'
-    end,
-  },
-
-  {
-    'nvchad/base46',
-    lazy = true,
-    build = function()
-      require('base46').load_all_highlights()
-    end,
   },
 
   { 'tpope/vim-surround' },
@@ -1112,10 +1122,5 @@ require('lazy').setup({
   },
 })
 
-for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
-  dofile(vim.g.base46_cache .. v)
-end
-
-vim.cmd 'highlight FoldColumn guibg=#1e1e2e'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
