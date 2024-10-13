@@ -19,6 +19,7 @@ return {
         position = 'float',
         mappings = {
           ['<leader>e'] = 'close_window',
+          ['Z'] = 'expand_all_nodes',
         },
       },
     },

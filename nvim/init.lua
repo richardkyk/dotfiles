@@ -166,6 +166,10 @@ vim.opt.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 --  See `:help vim.keymap.set()`
 vim.keymap.set('i', 'jj', '<Esc>')
 
+-- Map <C-j> and <C-k> for command-line completion navigation in Lua
+vim.keymap.set('c', '<C-j>', '<C-n>')
+vim.keymap.set('c', '<C-k>', '<C-p>')
+
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -690,6 +694,13 @@ require('lazy').setup({
       {
         '<leader>f',
         function()
+          -- Check if tailwindcss-language-server is running and call its sort command
+          local clients = vim.lsp.get_clients()
+          for _, client in ipairs(clients) do
+            if client.name == 'tailwindcss' then
+              vim.cmd 'TailwindSort'
+            end
+          end
           require('conform').format { async = true, lsp_format = 'fallback' }
         end,
         mode = '',
