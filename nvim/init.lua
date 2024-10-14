@@ -376,6 +376,7 @@ require('lazy').setup({
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
+          path_display = { 'smart' },
           sorting_strategy = 'ascending',
           layout_strategy = 'vertical',
           layout_config = {
@@ -395,6 +396,17 @@ require('lazy').setup({
         pickers = {
           current_buffer_fuzzy_find = {
             sorting_strategy = 'ascending',
+          },
+          find_files = {
+            hidden = true,
+            find_command = {
+              'rg',
+              '--files',
+              '--glob',
+              '!{.git/*,.svelte-kit/*,target/*,node_modules/*}',
+              '--path-separator',
+              '/',
+            },
           },
         },
         extensions = {
@@ -901,6 +913,17 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    ---@module "ibl"
+    ---@type ibl.config
+    opts = {
+      indent = {
+        char = '▏',
+      },
+    },
+  },
 
   {
     'kevinhwang91/nvim-ufo',
