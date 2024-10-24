@@ -11,12 +11,12 @@
 
 ### WSL
 ```bash
-ln -s /mnt/c/Users/Richard/Documents/Coding/dotfiles/nvim ~/.config/nvim
+ln -s ~/path/to/dotfiles/nvim ~/.config/nvim
 ```
-This will create a symlink from `~/.config/nvim` to the `nvim` folder on your Windows machine.
-So that you can use the same configuration on both Windows and Linux.
+This will create a symlink from `~/.config/nvim` to the `nvim` folder for the repo.
 
-# Issues
+
+# Issues (Windows)
 ## tailwind-tools.nvim
 
 By default tailwind-tools.nvim doesn't automatically attach to the buffer when you open it.
