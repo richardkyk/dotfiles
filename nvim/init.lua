@@ -398,12 +398,13 @@ require('lazy').setup({
             sorting_strategy = 'ascending',
           },
           find_files = {
-            hidden = true,
             find_command = {
               'rg',
+              '--hidden',
+              '--no-ignore',
               '--files',
               '--glob',
-              '!{.git/*,.svelte-kit/*,target/*,node_modules/*}',
+              '!{.git/*,.next/*,target/*,node_modules/*}',
               '--path-separator',
               '/',
             },
@@ -649,8 +650,6 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
-        --
-        --
 
         lua_ls = {
           -- cmd = {...},
@@ -686,6 +685,9 @@ require('lazy').setup({
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
+            if server_name == 'eslint' then
+              return
+            end
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
@@ -800,7 +802,8 @@ require('lazy').setup({
             luasnip.lsp_expand(args.body)
           end,
         },
-        completion = { completeopt = 'menu,menuone,noinsert' },
+        preselect = cmp.PreselectMode.None,
+        completion = { completeopt = 'menu,menuone,noselect' },
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
@@ -824,7 +827,7 @@ require('lazy').setup({
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
           -- ['<CR>'] = cmp.mapping.confirm { select = true },
-          ['<Tab>'] = cmp.mapping.confirm { select = true },
+          ['<Tab>'] = cmp.mapping.confirm { select = false },
           --['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
           -- Manually trigger a completion from nvim-cmp.
@@ -865,9 +868,34 @@ require('lazy').setup({
           { name = 'luasnip' },
           { name = 'path' },
         },
+        window = {
+          completion = {
+            col_offset = -3,
+            side_padding = 0,
+          },
+        },
         formatting = {
+          fields = { 'kind', 'abbr', 'menu' },
           format = require('lspkind').cmp_format {
-            before = require('tailwind-tools.cmp').lspkind_format,
+            mode = 'symbol',
+            maxwidth = 50,
+            ellipsis_char = '...',
+            show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+            before = function(entry, vim_item)
+              if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= '' then
+                vim_item.menu = entry.completion_item.detail
+              else
+                vim_item.menu = ({
+                  nvim_lsp = '[LSP]',
+                  luasnip = '[Snippet]',
+                  buffer = '[Buffer]',
+                  path = '[Path]',
+                })[entry.source.name]
+              end
+
+              require('tailwind-tools.cmp').lspkind_format(entry, vim_item)
+              return vim_item
+            end,
           },
         },
         performance = {
@@ -913,6 +941,13 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
+  {
+    'folke/ts-comments.nvim',
+    opts = {},
+    event = 'VeryLazy',
+    enabled = vim.fn.has 'nvim-0.10.0' == 1,
+  },
   {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
@@ -992,17 +1027,6 @@ require('lazy').setup({
       vim.cmd 'hi SlimlinePrimary guibg=#cdd6f4'
       vim.cmd 'hi SlimlineSecondary guibg=#585b70 guifg=#cdd6f4'
     end,
-  },
-
-  {
-    'OlegGulevskyy/better-ts-errors.nvim',
-    dependencies = { 'MunifTanjim/nui.nvim' },
-    opts = {
-      keymaps = {
-        toggle = '<leader>dd', -- default '<leader>dd'
-        go_to_definition = '<leader>dx', -- default '<leader>dx'
-      },
-    },
   },
 
   -- this is required for mini.ai textobjects to work correctly
