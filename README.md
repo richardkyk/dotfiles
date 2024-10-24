@@ -1,5 +1,6 @@
 # Config
 ## Create symlinks
+### Windows
 ```powershell
     # You may need to run this as an admin
     # Press tab to expand to the full paths
@@ -7,6 +8,13 @@
     cmd /c mklink /d ~\.config\wezterm <location of dotfiles>\wezterm
 
 ```
+
+### WSL
+```bash
+ln -s /mnt/c/Users/Richard/Documents/Coding/dotfiles/nvim ~/.config/nvim
+```
+This will create a symlink from `~/.config/nvim` to the `nvim` folder on your Windows machine.
+So that you can use the same configuration on both Windows and Linux.
 
 # Issues
 ## tailwind-tools.nvim
