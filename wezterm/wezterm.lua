@@ -4,8 +4,7 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local projects = require("projects")
 
-config.default_prog = { "pwsh.exe" }
-
+config.default_domain = "WSL:Ubuntu"
 
 config.set_environment_variables = {
 	PATH = "/opt/homebrew/bin:" .. os.getenv("PATH"),
