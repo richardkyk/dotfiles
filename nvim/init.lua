@@ -735,7 +735,7 @@ require('lazy').setup({
           lsp_format_opt = 'fallback'
         end
         return {
-          timeout_ms = 500,
+          timeout_ms = 5000,
           lsp_format = lsp_format_opt,
         }
       end,
@@ -1181,5 +1181,10 @@ require('lazy').setup({
   },
 })
 
+-- place this after colorscheme is set
+local hl_groups = { 'DiagnosticUnderlineError', 'DiagnosticUnderlineWarn', 'DiagnosticUnderlineInfo', 'DiagnosticUnderlineHint' }
+for _, hl in ipairs(hl_groups) do
+  vim.cmd.highlight(hl .. ' gui=undercurl')
+end
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
