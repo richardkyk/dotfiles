@@ -4,7 +4,13 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local projects = require("projects")
 
-config.default_domain = "WSL:Ubuntu"
+local is_windows = function()
+	return wezterm.target_triple:find("windows") ~= nil
+end
+
+if is_windows() then
+	config.default_domain = "WSL:Ubuntu"
+end
 
 config.set_environment_variables = {
 	PATH = "/opt/homebrew/bin:" .. os.getenv("PATH"),
