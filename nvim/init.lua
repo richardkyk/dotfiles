@@ -685,9 +685,6 @@ require('lazy').setup({
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
-            if server_name == 'eslint' then
-              return
-            end
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
@@ -870,17 +867,49 @@ require('lazy').setup({
         },
         window = {
           completion = {
-            col_offset = -3,
+            col_offset = -1,
             side_padding = 0,
+          },
+        },
+        sorting = {
+          comparators = {
+            cmp.config.compare.exact,
           },
         },
         formatting = {
           fields = { 'kind', 'abbr', 'menu' },
           format = require('lspkind').cmp_format {
             mode = 'symbol',
+            preset = 'codicons',
             maxwidth = 50,
             ellipsis_char = '...',
-            show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+            symbol_map = {
+              Text = '',
+              Method = '',
+              Function = '',
+              Constructor = '',
+              Field = '',
+              Variable = '',
+              Class = '',
+              Interface = '',
+              Module = '',
+              Property = '',
+              Unit = '',
+              Value = '',
+              Enum = '',
+              Keyword = '',
+              Snippet = '',
+              Color = '',
+              File = '',
+              Reference = '',
+              Folder = '',
+              EnumMember = '',
+              Constant = '',
+              Struct = '',
+              Event = '',
+              Operator = '',
+              TypeParameter = '',
+            },
             before = function(entry, vim_item)
               if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= '' then
                 vim_item.menu = entry.completion_item.detail
@@ -894,6 +923,8 @@ require('lazy').setup({
               end
 
               require('tailwind-tools.cmp').lspkind_format(entry, vim_item)
+
+              vim_item.abbr = vim_item.abbr:match '[^(]+'
               return vim_item
             end,
           },

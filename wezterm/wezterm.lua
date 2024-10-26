@@ -27,7 +27,7 @@ config.colors = {
 }
 
 config.window_padding = { bottom = 0, top = 0, left = 0, right = 0 }
-config.font = wezterm.font("JetBrains Mono")
+config.font = wezterm.font_with_fallback({ "JetBrains Mono", "codicons" })
 config.font_size = 12
 
 -- Slightly transparent and blurred background
