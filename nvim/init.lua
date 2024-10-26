@@ -793,6 +793,34 @@ require('lazy').setup({
       local luasnip = require 'luasnip'
       luasnip.config.setup {}
 
+      local symbol_map = {
+        Text = '',
+        Method = '',
+        Function = '',
+        Constructor = '',
+        Field = '',
+        Variable = '',
+        Class = '',
+        Interface = '',
+        Module = '',
+        Property = '',
+        Unit = '',
+        Value = '',
+        Enum = '',
+        Keyword = '',
+        Snippet = '',
+        Color = '󰝤',
+        File = '',
+        Reference = '',
+        Folder = '',
+        EnumMember = '',
+        Constant = '',
+        Struct = '',
+        Event = '',
+        Operator = '',
+        TypeParameter = '',
+      }
+
       local options = {
         snippet = {
           expand = function(args)
@@ -874,7 +902,15 @@ require('lazy').setup({
         sorting = {
           comparators = {
             cmp.config.compare.exact,
+            cmp.config.compare.order,
           },
+        },
+        matching = {
+          disallow_fuzzy_matching = true,
+          disallow_fullfuzzy_matching = true,
+          disallow_partial_fuzzy_matching = true,
+          disallow_partial_matching = true,
+          disallow_prefix_unmatching = true,
         },
         formatting = {
           fields = { 'kind', 'abbr', 'menu' },
@@ -883,48 +919,37 @@ require('lazy').setup({
             preset = 'codicons',
             maxwidth = 50,
             ellipsis_char = '...',
-            symbol_map = {
-              Text = '',
-              Method = '',
-              Function = '',
-              Constructor = '',
-              Field = '',
-              Variable = '',
-              Class = '',
-              Interface = '',
-              Module = '',
-              Property = '',
-              Unit = '',
-              Value = '',
-              Enum = '',
-              Keyword = '',
-              Snippet = '',
-              Color = '',
-              File = '',
-              Reference = '',
-              Folder = '',
-              EnumMember = '',
-              Constant = '',
-              Struct = '',
-              Event = '',
-              Operator = '',
-              TypeParameter = '',
-            },
+            symbol_map = symbol_map,
             before = function(entry, vim_item)
-              if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= '' then
-                vim_item.menu = entry.completion_item.detail
-              else
-                vim_item.menu = ({
-                  nvim_lsp = '[LSP]',
-                  luasnip = '[Snippet]',
-                  buffer = '[Buffer]',
-                  path = '[Path]',
-                })[entry.source.name]
+              -- if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= '' then
+              --   vim_item.menu = entry.completion_item.detail
+              -- else
+              --   vim_item.menu = ({
+              --     nvim_lsp = '[LSP]',
+              --     luasnip = '[Snippet]',
+              --     buffer = '[Buffer]',
+              --     path = '[Path]',
+              --   })[entry.source.name]
+              -- end
+              local entryItem = entry:get_completion_item()
+              local color = entryItem.documentation
+
+              -- check if color is hexcolor
+              if color and type(color) == 'string' and color:match '^#%x%x%x%x%x%x$' then
+                local hl = 'hex-' .. color:sub(2)
+
+                if #vim.api.nvim_get_hl(0, { name = hl }) == 0 then
+                  vim.api.nvim_set_hl(0, hl, { fg = color })
+                end
+
+                vim_item.menu = 'Color'
+                vim_item.menu_hl_group = hl
               end
 
-              require('tailwind-tools.cmp').lspkind_format(entry, vim_item)
-
+              vim_item.menu = vim_item.kind
               vim_item.abbr = vim_item.abbr:match '[^(]+'
+
+              require('tailwind-tools.cmp').lspkind_format(entry, vim_item)
               return vim_item
             end,
           },
