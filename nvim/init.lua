@@ -821,6 +821,8 @@ require('lazy').setup({
         TypeParameter = '',
       }
 
+      local has_logged = false
+
       local options = {
         snippet = {
           expand = function(args)
@@ -895,7 +897,7 @@ require('lazy').setup({
         },
         window = {
           completion = {
-            col_offset = -1,
+            col_offset = -3,
             side_padding = 0,
           },
         },
@@ -915,7 +917,7 @@ require('lazy').setup({
         formatting = {
           fields = { 'kind', 'abbr', 'menu' },
           format = require('lspkind').cmp_format {
-            mode = 'symbol',
+            mode = 'symbol_text',
             preset = 'codicons',
             maxwidth = 50,
             ellipsis_char = '...',
@@ -934,7 +936,9 @@ require('lazy').setup({
               local entryItem = entry:get_completion_item()
               local color = entryItem.documentation
 
-              -- check if color is hexcolor
+              -- set colour to match kind
+              vim_item.menu_hl_group = 'CmpItemKind' .. vim_item.kind
+              -- check if color is hexcolor, if it is then overwrite the kind colour
               if color and type(color) == 'string' and color:match '^#%x%x%x%x%x%x$' then
                 local hl = 'hex-' .. color:sub(2)
 
@@ -942,12 +946,12 @@ require('lazy').setup({
                   vim.api.nvim_set_hl(0, hl, { fg = color })
                 end
 
-                vim_item.menu = 'Color'
                 vim_item.menu_hl_group = hl
+                vim_item.kind_hl_group = hl
               end
-
-              vim_item.menu = vim_item.kind
               vim_item.abbr = vim_item.abbr:match '[^(]+'
+              vim_item.menu = vim_item.kind
+              vim_item.kind = symbol_map[vim_item.kind] .. ' '
 
               require('tailwind-tools.cmp').lspkind_format(entry, vim_item)
               return vim_item
