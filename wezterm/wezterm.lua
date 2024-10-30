@@ -9,7 +9,15 @@ local is_windows = function()
 end
 
 if is_windows() then
+	local wsl_domains = wezterm.default_wsl_domains()
+
+	for _, dom in ipairs(wsl_domains) do
+		dom.default_cwd = "~"
+	end
+
+	config.wsl_domains = wsl_domains
 	config.default_domain = "WSL:Ubuntu"
+	config.default_prog = { "wsl.exe" }
 end
 
 config.set_environment_variables = {
@@ -27,7 +35,10 @@ config.colors = {
 }
 
 config.window_padding = { bottom = 0, top = 0, left = 0, right = 0 }
-config.font = wezterm.font_with_fallback({ "JetBrains Mono", "codicons" })
+config.font = wezterm.font_with_fallback({
+	{ family = "Geist Mono", weight = "Regular" },
+	"codicons",
+})
 config.font_size = 12
 
 -- Slightly transparent and blurred background
