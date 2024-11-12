@@ -1089,6 +1089,7 @@ require('lazy').setup({
     opts = {
       indent = {
         char = '▏',
+        tab_char = '▏',
       },
     },
   },
