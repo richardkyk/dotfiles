@@ -997,16 +997,6 @@ require('lazy').setup({
             ellipsis_char = '...',
             symbol_map = symbol_map,
             before = function(entry, vim_item)
-              -- if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= '' then
-              --   vim_item.menu = entry.completion_item.detail
-              -- else
-              --   vim_item.menu = ({
-              --     nvim_lsp = '[LSP]',
-              --     luasnip = '[Snippet]',
-              --     buffer = '[Buffer]',
-              --     path = '[Path]',
-              --   })[entry.source.name]
-              -- end
               local entryItem = entry:get_completion_item()
               local color = entryItem.documentation
 
@@ -1023,8 +1013,12 @@ require('lazy').setup({
                 vim_item.menu_hl_group = hl
                 vim_item.kind_hl_group = hl
               end
+
+              local firstLine = entryItem.detail:match '^[^\n]*'
+              local pathName = firstLine:gsub('^Auto import from%s*["\']', ''):gsub('["\']$', '')
+
               vim_item.abbr = vim_item.abbr:match '[^(]+'
-              vim_item.menu = vim_item.kind
+              vim_item.menu = pathName
               vim_item.kind = symbol_map[vim_item.kind] .. ' '
 
               require('tailwind-tools.cmp').lspkind_format(entry, vim_item)
