@@ -1014,7 +1014,10 @@ require('lazy').setup({
                 vim_item.kind_hl_group = hl
               end
 
-              local firstLine = entryItem.detail:match '^[^\n]*'
+              local firstLine = ''
+              if entryItem.detail then
+                firstLine = entryItem.detail:match '^[^\n]*'
+              end
               local pathName = firstLine:gsub('^Auto import from%s*["\']', ''):gsub('["\']$', '')
 
               vim_item.abbr = vim_item.abbr:match '[^(]+'
