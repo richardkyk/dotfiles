@@ -137,7 +137,7 @@ vim.opt.updatetime = 250
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 1000
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -808,7 +808,7 @@ require('lazy').setup({
           lsp_format_opt = 'fallback'
         end
         return {
-          timeout_ms = 1000,
+          timeout_ms = 2000,
           lsp_format = lsp_format_opt,
         }
       end,
@@ -1124,7 +1124,7 @@ require('lazy').setup({
     },
   },
 
-  { 'tpope/vim-surround' },
+  -- { 'tpope/vim-surround' },
   {
     'supermaven-inc/supermaven-nvim',
     config = function()
@@ -1162,30 +1162,36 @@ require('lazy').setup({
   },
 
   -- this is required for mini.ai textobjects to work correctly
-  { 'nvim-treesitter/nvim-treesitter-textobjects' },
+  -- { 'nvim-treesitter/nvim-treesitter-textobjects' },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
-      -- require('mini.pairs').setup()
+      require('mini.pairs').setup()
       -- Better Around/Inside textobjects
       --
       -- Examples:
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      local spec_treesitter = require('mini.ai').gen_spec.treesitter
-      vim.b.miniai_config = {
-        custom_textobjects = {
-          t = spec_treesitter { a = '@tag.outer', i = '@tag.inner' },
-        },
+      require('mini.ai').setup {
+        search_method = 'cover',
+        n_lines = 50,
       }
+      -- local spec_treesitter = require('mini.ai').gen_spec.treesitter
+      -- vim.b.miniai_config = {
+      --   custom_textobjects = {
+      --     t = spec_treesitter { a = '@tag.outer', i = '@tag.inner' },
+      --   },
+      -- }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      -- require('mini.surround').setup()
+      require('mini.surround').setup {
+        n_lines = 50,
+      }
 
       -- -- Simple and easy statusline.
       -- --  You could remove this setup call if you don't like it,
