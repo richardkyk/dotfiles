@@ -1175,14 +1175,14 @@ require('lazy').setup({
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup {
         search_method = 'cover',
-        n_lines = 50,
+        n_lines = 500,
       }
-      -- local spec_treesitter = require('mini.ai').gen_spec.treesitter
-      -- vim.b.miniai_config = {
-      --   custom_textobjects = {
-      --     t = spec_treesitter { a = '@tag.outer', i = '@tag.inner' },
-      --   },
-      -- }
+      local spec_treesitter = require('mini.ai').gen_spec.treesitter
+      vim.b.miniai_config = {
+        custom_textobjects = {
+          t = spec_treesitter { a = '@function.outer', i = '@function.inner' },
+        },
+      }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
@@ -1190,7 +1190,7 @@ require('lazy').setup({
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup {
-        n_lines = 50,
+        n_lines = 500,
       }
 
       -- -- Simple and easy statusline.
