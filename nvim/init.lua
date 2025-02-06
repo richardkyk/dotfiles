@@ -1170,7 +1170,7 @@ require('lazy').setup({
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
-      require('mini.pairs').setup()
+      -- require('mini.pairs').setup()
       -- Better Around/Inside textobjects
       --
       -- Examples:
