@@ -74,6 +74,18 @@ local function resize_pane(key, direction)
 	}
 end
 
+local function bind_keys_in_nvim(key, mods)
+	return function(window, pane)
+		local is_nvim = pane:get_foreground_process_name():match(".*/([^/]+)$") == "nvim"
+
+		if not is_nvim then
+			return
+		end
+
+		window:perform_action({ SendKey = { key = key, mods = mods } }, pane)
+	end
+end
+
 -- If you're using emacs you probably wanna choose a different leader here,
 -- since we're gonna be making it a bit harder to CTRL + A for jumping to
 -- the start of a line
@@ -174,6 +186,10 @@ config.keys = {
 		mods = "LEADER",
 		action = wezterm.action.CloseCurrentPane({ confirm = true }),
 	},
+
+	-- remapping the jk on osx
+	{ key = "j", mods = "CMD", action = wezterm.action_callback(bind_keys_in_nvim("j", "CTRL")) },
+	{ key = "k", mods = "CMD", action = wezterm.action_callback(bind_keys_in_nvim("k", "CTRL")) },
 }
 for i = 1, 8 do
 	table.insert(config.keys, {
