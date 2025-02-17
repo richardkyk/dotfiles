@@ -818,6 +818,8 @@ require('lazy').setup({
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
         typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
@@ -1177,15 +1179,15 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
+      -- local spec_treesitter = require('mini.ai').gen_spec.treesitter
       require('mini.ai').setup {
         search_method = 'cover',
         n_lines = 500,
-      }
-      local spec_treesitter = require('mini.ai').gen_spec.treesitter
-      vim.b.miniai_config = {
-        custom_textobjects = {
-          t = spec_treesitter { a = '@function.outer', i = '@function.inner' },
-        },
+        -- custom_textobjects = {
+        --   f = spec_treesitter { a = '@function.outer', i = '@function.inner' },
+        --   t = { '<([%p%w]-)%f[^<%w][^<>]->.-</%1>', '^<.->().*()</[^/]->$' },
+        --   j = spec_treesitter { a = '@jsx.outer', i = '@jsx.inner' },
+        -- },
       }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
