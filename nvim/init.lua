@@ -1168,7 +1168,7 @@ require('lazy').setup({
   },
 
   -- this is required for mini.ai textobjects to work correctly
-  -- { 'nvim-treesitter/nvim-treesitter-textobjects' },
+  { 'nvim-treesitter/nvim-treesitter-textobjects' },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -1179,15 +1179,17 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      -- local spec_treesitter = require('mini.ai').gen_spec.treesitter
+      local spec_treesitter = require('mini.ai').gen_spec.treesitter
       require('mini.ai').setup {
         search_method = 'cover',
         n_lines = 500,
-        -- custom_textobjects = {
-        --   f = spec_treesitter { a = '@function.outer', i = '@function.inner' },
-        --   t = { '<([%p%w]-)%f[^<%w][^<>]->.-</%1>', '^<.->().*()</[^/]->$' },
-        --   j = spec_treesitter { a = '@jsx.outer', i = '@jsx.inner' },
-        -- },
+        enabled = false,
+        custom_textobjects = {
+          t = spec_treesitter { a = '@jsx_element.outer', i = '@jsx_element.inner' },
+          -- f = spec_treesitter { a = '@function.outer', i = '@function.inner' },
+          -- t = { '<([%p%w]-)%f[^<%w][^<>]->.-</%1>', '^<.->().*()</[^/]->$' },
+          -- j = spec_treesitter { a = '@jsx.outer', i = '@jsx.inner' },
+        },
       }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
