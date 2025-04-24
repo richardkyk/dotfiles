@@ -20,7 +20,6 @@ return {
         hide_dotfiles = false,
         hide_gitignored = true,
         never_show = {
-          'node_modules',
           '.git',
         },
       },

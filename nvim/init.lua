@@ -552,6 +552,7 @@ require('lazy').setup({
   },
   {
     'luckasRanarison/tailwind-tools.nvim',
+    enabled = false,
     name = 'tailwind-tools',
     build = ':UpdateRemotePlugins',
     dependencies = {
@@ -663,28 +664,28 @@ require('lazy').setup({
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          -- if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-          --   -- local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-          --   -- vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-          --   --   buffer = event.buf,
-          --   --   group = highlight_augroup,
-          --   --   callback = vim.lsp.buf.document_highlight,
-          --   -- })
-          --
-          --   -- vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-          --   --   buffer = event.buf,
-          --   --   group = highlight_augroup,
-          --   --   callback = vim.lsp.buf.clear_references,
-          --   -- })
-          --   --
-          --   vim.api.nvim_create_autocmd('LspDetach', {
-          --     group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-          --     callback = function(event2)
-          --       vim.lsp.buf.clear_references()
-          --       vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-          --     end,
-          --   })
-          -- end
+          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.document_highlight,
+            })
+
+            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.clear_references,
+            })
+
+            vim.api.nvim_create_autocmd('LspDetach', {
+              group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+              callback = function(event2)
+                vim.lsp.buf.clear_references()
+                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+              end,
+            })
+          end
           --
           -- The following code creates a keymap to toggle inlay hints in your
           -- code, if the language server you are using supports them
@@ -716,7 +717,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -862,7 +863,7 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
-      'luckasRanarison/tailwind-tools.nvim',
+      -- 'luckasRanarison/tailwind-tools.nvim',
       'onsails/lspkind-nvim',
     },
     config = function()
@@ -1026,7 +1027,7 @@ require('lazy').setup({
               vim_item.menu = pathName
               vim_item.kind = symbol_map[vim_item.kind] .. ' '
 
-              require('tailwind-tools.cmp').lspkind_format(entry, vim_item)
+              -- require('tailwind-tools.cmp').lspkind_format(entry, vim_item)
               return vim_item
             end,
           },
@@ -1185,10 +1186,10 @@ require('lazy').setup({
         n_lines = 500,
         enabled = false,
         custom_textobjects = {
-          t = spec_treesitter { a = '@jsx_element.outer', i = '@jsx_element.inner' },
+          -- t = spec_treesitter { a = '@jsx_element.outer', i = '@jsx_element.inner' },
           -- f = spec_treesitter { a = '@function.outer', i = '@function.inner' },
           -- t = { '<([%p%w]-)%f[^<%w][^<>]->.-</%1>', '^<.->().*()</[^/]->$' },
-          -- j = spec_treesitter { a = '@jsx.outer', i = '@jsx.inner' },
+          t = spec_treesitter { a = '@jsx.outer', i = '@jsx.inner' },
         },
       }
 
@@ -1252,6 +1253,7 @@ require('lazy').setup({
         'c',
         'diff',
         'html',
+        'go',
         'css',
         'tsx',
         'lua',
