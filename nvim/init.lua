@@ -410,6 +410,12 @@ require('lazy').setup({
               '/',
             },
           },
+          grep_string = {
+            additional_args = { '--hidden' },
+          },
+          live_grep = {
+            additional_args = { '--hidden' },
+          },
         },
         extensions = {
           ['ui-select'] = {
@@ -500,6 +506,7 @@ require('lazy').setup({
         dashboard.button('e', '   File Explorer', ':Neotree<CR>'),
         dashboard.button('r', '   Recent', ':Telescope oldfiles<CR>'),
         dashboard.button('c', '   Configuration', ':e ~/.config/nvim/init.lua<CR>'),
+        dashboard.button('l', '   Lazy', ':Lazy<CR>'),
         dashboard.button('R', '󱘞   Ripgrep', ':Telescope live_grep<CR>'),
         dashboard.button('q', '󰗼   Quit', ':qa<CR>'),
       }
