@@ -25,6 +25,7 @@ return {
       dashboard.button('r', '   Recent', ':Telescope oldfiles<CR>'),
       dashboard.button('c', '   Configuration', ':e ~/.config/nvim/init.lua<CR>'),
       dashboard.button('l', '   Lazy', ':Lazy<CR>'),
+      dashboard.button('g', '   LazyGit', ':LazyGit<CR>'),
       dashboard.button('R', '󱘞   Ripgrep', ':Telescope live_grep<CR>'),
       dashboard.button('q', '󰗼   Quit', ':qa<CR>'),
     }
