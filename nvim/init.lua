@@ -883,7 +883,7 @@ require('lazy').setup({
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 2000,
             lsp_format = 'fallback',
           }
         end
@@ -894,11 +894,21 @@ require('lazy').setup({
         -- python = { 'ruff_organize_imports', 'ruff_format' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        html = { 'prettierd', 'prettier', stop_after_first = true },
-        css = { 'prettierd', 'prettier', stop_after_first = true },
-        json = { 'prettierd', 'prettier', stop_after_first = true },
-        jsonc = { 'prettierd', 'prettier', stop_after_first = true },
+        javascript = { 'rustywind', 'prettierd' },
+        typescript = { 'rustywind', 'prettierd' },
+        javascriptreact = { 'rustywind', 'prettierd' },
+        typescriptreact = { 'rustywind', 'prettierd' },
+        html = { 'rustywind', 'prettierd' },
+        htmlangular = { 'rustywind', 'prettierd' },
+        css = { 'prettierd' },
+        json = { 'prettierd' },
+        jsonc = { 'prettierd' },
+      },
+      formatters = {
+        rustywind = {
+          command = 'rustywind',
+          args = { '--stdin' },
+        },
       },
     },
   },
