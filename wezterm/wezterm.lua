@@ -34,12 +34,14 @@ config.colors = {
 	},
 }
 
-config.window_padding = { bottom = 0, top = 0, left = 0, right = 0 }
-config.font = wezterm.font_with_fallback({
+local main_font = wezterm.font_with_fallback({
 	{ family = "JetBrains Mono", weight = "Regular" },
 	{ family = "JetBrainsMono Nerd Font Mono", weight = "Regular" },
 	"codicons",
 })
+
+config.window_padding = { bottom = 0, top = 0, left = 0, right = 0 }
+config.font = main_font
 config.font_size = 12
 
 -- Slightly transparent and blurred background
@@ -55,8 +57,8 @@ config.window_decorations = "RESIZE"
 config.window_frame = {
 	-- Berkeley Mono for me again, though an idea could be to try a
 	-- serif font here instead of monospace for a nicer look?
-	font = wezterm.font({ family = "JetBrains Mono" }),
-	font_size = 10,
+	font = main_font,
+	font_size = 12,
 }
 
 local function move_pane(key, direction)
