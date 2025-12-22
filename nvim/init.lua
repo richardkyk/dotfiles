@@ -794,6 +794,7 @@ require('lazy').setup({
           --
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           ts_ls = {},
+          tailwindcss = {},
 
           lua_ls = {
             -- cmd = { ... },
@@ -987,6 +988,12 @@ require('lazy').setup({
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        list = {
+          selection = {
+            preselect = false,
+            auto_insert = true,
+          },
+        },
       },
 
       sources = {
