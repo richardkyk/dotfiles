@@ -794,7 +794,9 @@ require('lazy').setup({
           --
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           ts_ls = {},
-          tailwindcss = {},
+          tailwindcss = {
+            filetypes = { 'html', 'css', 'javascript', 'typescript', 'vue', 'react', 'htmlangular' },
+          },
 
           lua_ls = {
             -- cmd = { ... },
@@ -974,6 +976,22 @@ require('lazy').setup({
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
 
+        ['<Tab>'] = {
+          function(cmp)
+            -- 1. If blink menu is visible, accept the highlighted item
+            if cmp.is_visible() and cmp.get_selected_item() then
+              return cmp.select_and_accept()
+            end
+            -- 2. Check if Supermaven has a suggestion visible
+            local sm = require 'supermaven-nvim.completion_preview'
+            if sm.has_suggestion() then
+              vim.schedule(function() sm.on_accept_suggestion() end)
+              return true -- Stop execution here if Supermaven accepted
+            end
+          end,
+          'snippet_forward', -- 3. If in a snippet, jump forward
+          'fallback', -- 4. Otherwise, insert a literal tab
+        },
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },
