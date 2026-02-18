@@ -6,8 +6,23 @@ return { -- You can easily change to a different colorscheme.
   'catppuccin/nvim',
   name = 'catppuccin',
   priority = 1000, -- Make sure to load this before all the other start plugins.
-  init = function()
-    -- Load the colorscheme here.
+  config = function()
+    require('catppuccin').setup {
+      flavour = 'mocha',
+      integrations = {
+        blink_cmp = true,
+      },
+      custom_highlights = function(colors)
+        return {
+          -- Blink
+          BlinkCmpMenu = { bg = colors.base },
+          BlinkCmpMenuBorder = { bg = colors.base, fg = colors.blue },
+          BlinkCmpDoc = { bg = colors.base },
+          BlinkCmpDocBorder = { bg = colors.base, fg = colors.blue },
+        }
+      end,
+    }
+    -- setup must be called before loading
     vim.cmd.colorscheme 'catppuccin'
   end,
 }
