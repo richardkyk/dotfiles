@@ -238,6 +238,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function() vim.hl.on_yank { timeout = 200 } end,
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'typescript', 'typescriptreact', 'javascriptreact', 'javascript' },
+  callback = function()
+    vim.bo.tabstop = 2
+    vim.bo.shiftwidth = 2
+    vim.bo.softtabstop = 2
+    vim.bo.expandtab = true
+  end,
+})
+
 -- Restore cursor position on file open
 vim.api.nvim_create_autocmd('BufReadPost', {
   desc = 'Restore cursor position on file open',
