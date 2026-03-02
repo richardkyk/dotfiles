@@ -468,6 +468,7 @@ require('lazy').setup({
       -- This opens a window that shows you all of the keymaps for the current
       -- Telescope picker. This is really useful to discover what Telescope can
       -- do as well as how to actually do it!
+      local actions = require 'telescope.actions'
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
@@ -488,7 +489,8 @@ require('lazy').setup({
           },
           mappings = {
             n = {
-              ['q'] = require('telescope.actions').close,
+              ['q'] = actions.close,
+              ['<C-o>'] = actions.send_to_qflist + actions.open_qflist,
             },
             -- i = { ['<c-enter>'] = 'to_fuzzy_refine' },
           },
@@ -808,6 +810,8 @@ require('lazy').setup({
           tailwindcss = {
             filetypes = { 'html', 'css', 'javascript', 'typescript', 'vue', 'react', 'htmlangular', 'typescriptreact', 'javascriptreact' },
           },
+
+          eslint = {},
 
           lua_ls = {
             -- cmd = { ... },
