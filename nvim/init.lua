@@ -167,6 +167,8 @@ vim.o.confirm = true
 -- Disable line wrapping
 vim.o.wrap = true
 
+vim.o.winborder = 'rounded'
+
 -- Highlight max chars per line
 -- vim.o.colorcolumn = '120'
 --

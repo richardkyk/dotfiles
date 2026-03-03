@@ -19,6 +19,9 @@ return { -- You can easily change to a different colorscheme.
           BlinkCmpMenuBorder = { bg = colors.base, fg = colors.blue },
           BlinkCmpDoc = { bg = colors.base },
           BlinkCmpDocBorder = { bg = colors.base, fg = colors.blue },
+          -- Hover / floats
+          NormalFloat = { bg = colors.base },
+          FloatBorder = { bg = colors.base, fg = colors.blue },
         }
       end,
     }
