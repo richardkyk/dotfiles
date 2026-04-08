@@ -585,6 +585,7 @@ require('lazy').setup({
       library = {
         -- Load luvit types when the `vim.uv` word is found
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+        { path = 'lazy.nvim' },
       },
     },
   },
@@ -821,6 +822,9 @@ require('lazy').setup({
             -- capabilities = {},
             settings = {
               Lua = {
+                diagnostics = {
+                  globals = { 'vim' },
+                },
                 completion = {
                   callSnippet = 'Replace',
                 },
@@ -1022,6 +1026,11 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
+        accept = {
+          auto_brackets = {
+            enabled = false,
+          },
+        },
         documentation = { auto_show = false, auto_show_delay_ms = 500, window = { border = 'single' } },
         menu = { border = 'single' },
         list = {
@@ -1088,7 +1097,55 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      require('mini.ai').setup {
+        n_lines = 500,
+        custom_textobjects = {
+          t = function(ai_type)
+            local node = vim.treesitter.get_node()
+            if not node then
+              return
+            end
+
+            -- Walk up to find the nearest element node
+            while node and node:type() ~= 'element' and node:type() ~= 'jsx_element' do
+              node = node:parent()
+            end
+            if not node then
+              return
+            end
+
+            local start_row, start_col, end_row, end_col = node:range()
+
+            if ai_type == 'i' then
+              local open_tag = node:child(0)
+              local close_tag = node:child(node:child_count() - 1)
+              if open_tag and close_tag then
+                local _, _, or_, oc = open_tag:range()
+                local cr, cc, _, _ = close_tag:range()
+                if or_ == cr then
+                  -- Same line: inner is between end of open tag and start of close tag
+                  return {
+                    from = { line = or_ + 1, col = oc + 1 },
+                    to = { line = cr + 1, col = cc },
+                  }
+                else
+                  -- Multi-line: from next line after open tag to line before close tag
+                  local prev_line = vim.fn.getline(cr)
+                  return {
+                    from = { line = or_ + 2, col = 1 },
+                    to = { line = cr, col = math.max(#prev_line, 1) },
+                  }
+                end
+              end
+            end
+
+            return {
+              from = { line = start_row + 1, col = start_col + 1 },
+              to = { line = end_row + 1, col = end_col },
+            }
+          end,
+        },
+      }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
