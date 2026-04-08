@@ -1100,49 +1100,44 @@ require('lazy').setup({
       require('mini.ai').setup {
         n_lines = 500,
         custom_textobjects = {
-          t = function(ai_type)
-            local node = vim.treesitter.get_node()
-            if not node then
-              return
+          t = function(ai_type, id, opts)
+            if ai_type == 'a' then
+              return require('mini.ai').gen_spec.treesitter {
+                a = '@tag.outer',
+                i = '@tag.outer', -- dummy, won't be called for 'i'
+              }(ai_type, id, opts)
             end
 
-            -- Walk up to find the nearest element node
-            while node and node:type() ~= 'element' and node:type() ~= 'jsx_element' do
-              node = node:parent()
-            end
-            if not node then
-              return
-            end
+            local ok, result = pcall(function()
+              local node = vim.treesitter.get_node()
 
-            local start_row, start_col, end_row, end_col = node:range()
-
-            if ai_type == 'i' then
-              local open_tag = node:child(0)
-              local close_tag = node:child(node:child_count() - 1)
-              if open_tag and close_tag then
-                local _, _, or_, oc = open_tag:range()
-                local cr, cc, _, _ = close_tag:range()
-                if or_ == cr then
-                  -- Same line: inner is between end of open tag and start of close tag
-                  return {
-                    from = { line = or_ + 1, col = oc + 1 },
-                    to = { line = cr + 1, col = cc },
-                  }
-                else
-                  -- Multi-line: from next line after open tag to line before close tag
-                  local prev_line = vim.fn.getline(cr)
-                  return {
-                    from = { line = or_ + 2, col = 1 },
-                    to = { line = cr, col = math.max(#prev_line, 1) },
-                  }
-                end
+              while node and not node:type():match 'jsx_element' and node:type() ~= 'jsx_self_closing_element' do
+                node = node:parent()
               end
-            end
+              if not node then
+                return
+              end
+              if node:type() == 'jsx_self_closing_element' then
+                return
+              end
 
-            return {
-              from = { line = start_row + 1, col = start_col + 1 },
-              to = { line = end_row + 1, col = end_col },
-            }
+              local opening = node:named_child(0)
+              local closing = node:named_child(node:named_child_count() - 1)
+              if not opening or not closing then
+                return
+              end
+
+              local _, _, start_row, start_col = opening:range()
+              local end_row, end_col = closing:start()
+              return {
+                from = { line = start_row + 1, col = start_col + 1 },
+                to = { line = end_row + 1, col = end_col },
+              }
+            end)
+
+            if ok then
+              return result
+            end
           end,
         },
       }
