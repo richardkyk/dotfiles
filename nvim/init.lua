@@ -816,6 +816,8 @@ require('lazy').setup({
 
           eslint = {},
 
+          terraformls = {},
+
           lua_ls = {
             -- cmd = { ... },
             -- filetypes = { ... },
