@@ -1262,6 +1262,8 @@ require('lazy').setup({
   },
 })
 
+require('util.wezterm').setup()
+
 -- place this after colorscheme is set
 local hl_groups = { 'DiagnosticUnderlineError', 'DiagnosticUnderlineWarn', 'DiagnosticUnderlineInfo', 'DiagnosticUnderlineHint' }
 for _, hl in ipairs(hl_groups) do

@@ -1,6 +1,10 @@
 local M = {}
 
-local function set_user_var(key, value) io.write(string.format('\027]1337;SetUserVar=%s=%s\007', key, require('base64').encode(tostring(value)))) end
+local function set_user_var(key, value)
+  local b64 = vim.base64.encode(tostring(value))
+  io.write(string.format('\027]1337;SetUserVar=%s=%s\007', key, b64))
+  io.flush()
+end
 
 local nav = {
   h = 'Left',
