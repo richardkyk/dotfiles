@@ -102,13 +102,13 @@ config.keys = {
 	},
 
 	{
-		key = "h",
-		mods = "CTRL",
+		key = "LeftArrow",
+		mods = "SHIFT",
 		action = wezterm.action.SendString("\x1bb"),
 	},
 	{
-		key = "l",
-		mods = "CTRL",
+		key = "RightArrow",
+		mods = "SHIFT",
 		action = wezterm.action.SendString("\x1bf"),
 	},
 
