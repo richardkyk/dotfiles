@@ -55,8 +55,6 @@ config.font_size = 12
 config.window_decorations = "RESIZE"
 -- Sets the font for the window frame (tab bar)
 config.window_frame = {
-	-- Berkeley Mono for me again, though an idea could be to try a
-	-- serif font here instead of monospace for a nicer look?
 	font = main_font,
 	font_size = 12,
 }
@@ -88,22 +86,24 @@ local function bind_keys_in_nvim(key, mods)
 	end
 end
 
--- If you're using emacs you probably wanna choose a different leader here,
--- since we're gonna be making it a bit harder to CTRL + A for jumping to
--- the start of a line
 config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 }
 
--- Table mapping keypresses to actions
 config.keys = {
-	-- Sends ESC + b and ESC + f sequence, which is used
-	-- for telling your shell to jump back/forward.
+	-- JUMP TO PREVIOUS PROMPT COMMANDS
 	{
-		-- When the left arrow is pressed
+		key = "UpArrow",
+		mods = "SHIFT",
+		action = wezterm.action.ScrollToPrompt(-1),
+	},
+	{
+		key = "DownArrow",
+		mods = "SHIFT",
+		action = wezterm.action.ScrollToPrompt(1),
+	},
+
+	{
 		key = "h",
-		-- With the "Option" key modifier held down
 		mods = "CTRL",
-		-- Perform this action, in this case - sending ESC + B
-		-- to the terminal
 		action = wezterm.action.SendString("\x1bb"),
 	},
 	{
@@ -114,13 +114,11 @@ config.keys = {
 
 	-- JUMP TO START AND END OF LINE
 	{
-		-- Cmd + Left Arrow sends Ctrl + A (Start of line)
 		key = "LeftArrow",
-		mods = "SUPER", -- "SUPER" corresponds to the Command (Cmd) key on macOS
+		mods = "SUPER",
 		action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }),
 	},
 	{
-		-- Cmd + Right Arrow sends Ctrl + E (End of line)
 		key = "RightArrow",
 		mods = "SUPER",
 		action = wezterm.action.SendKey({ key = "e", mods = "CTRL" }),
@@ -136,13 +134,7 @@ config.keys = {
 	},
 
 	{
-		-- I'm used to tmux bindings, so am using the quotes (") key to
-		-- split horizontally, and the percent (%) key to split vertically.
 		key = '"',
-		-- Note that instead of a key modifier mapped to a key on your keyboard
-		-- like CTRL or ALT, we can use the LEADER modifier instead.
-		-- This means that this binding will be invoked when you press the leader
-		-- (CTRL + A), quickly followed by quotes (").
 		mods = "LEADER|SHIFT",
 		action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
 	},
@@ -154,9 +146,7 @@ config.keys = {
 
 	{
 		key = "a",
-		-- When we're in leader mode _and_ CTRL + A is pressed...
 		mods = "LEADER|CTRL",
-		-- Actually send CTRL + A key to the terminal
 		action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }),
 	},
 
@@ -166,16 +156,11 @@ config.keys = {
 	move_pane("l", "Right"),
 
 	{
-		-- When we push LEADER + R...
 		key = "r",
 		mods = "LEADER",
-		-- Activate the `resize_panes` keytable
 		action = wezterm.action.ActivateKeyTable({
 			name = "resize_panes",
-			-- Ensures the keytable stays active after it handles its
-			-- first keypress.
 			one_shot = false,
-			-- Deactivate the keytable after a timeout.
 			timeout_milliseconds = 1000,
 		}),
 	},
@@ -183,13 +168,11 @@ config.keys = {
 	{
 		key = "p",
 		mods = "LEADER",
-		-- Present in to our project picker
 		action = projects.choose_project(),
 	},
 	{
 		key = "f",
 		mods = "LEADER",
-		-- Present a list of existing workspaces
 		action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }),
 	},
 	{
@@ -215,6 +198,76 @@ for i = 1, 8 do
 	})
 end
 
+local act = wezterm.action
+local default_keys = wezterm.gui.default_key_tables()
+
+-- Merges `source` into `target`, with source entries overriding any existing
+-- entries in target that share the same key+mods combination.
+local function extend_keys(target, source)
+	local result = {}
+	-- index source overrides by "key|mods" for fast lookup
+	local overrides = {}
+	for _, binding in ipairs(source) do
+		local k = (binding.key or "") .. "|" .. (binding.mods or "NONE")
+		overrides[k] = binding
+	end
+	-- add target entries, skipping any that are overridden
+	for _, binding in ipairs(target) do
+		local k = (binding.key or "") .. "|" .. (binding.mods or "NONE")
+		if not overrides[k] then
+			table.insert(result, binding)
+		end
+	end
+	-- append all source entries
+	for _, binding in ipairs(source) do
+		table.insert(result, binding)
+	end
+	return result
+end
+
+local function close_copy_mode()
+	return act.Multiple({
+		act.CopyMode("ClearSelectionMode"),
+		act.CopyMode("ClearPattern"),
+		act.CopyMode("Close"),
+	})
+end
+
+local function copy_to()
+	return act.Multiple({
+		act.CopyTo("Clipboard"),
+		act.CopyMode("ClearSelectionMode"),
+	})
+end
+
+local function next_match(int)
+	local m = act.CopyMode("NextMatch")
+	if int == -1 then
+		m = act.CopyMode("PriorMatch")
+	end
+	-- ClearSelectionMode after moving so n/N don't activate selection
+	return act.Multiple({ m, act.CopyMode("ClearSelectionMode") })
+end
+
+-- Called when leaving search mode via Enter or Escape.
+-- If should_clear is true (Escape), wipes the pattern so it doesn't
+-- persist into the next search or cause the terminal to re-trigger searches
+-- on new output. Uses a retry loop because ClearSelectionMode doesn't
+-- reliably fire immediately after AcceptPattern due to WezTerm state mgmt.
+local function complete_search(should_clear)
+	return wezterm.action_callback(function(window, pane, _)
+		if should_clear then
+			window:perform_action(act.CopyMode("ClearPattern"), pane)
+		end
+		window:perform_action(act.CopyMode("AcceptPattern"), pane)
+
+		for _ = 1, 3, 1 do
+			wezterm.sleep_ms(100)
+			window:perform_action(act.CopyMode("ClearSelectionMode"), pane)
+		end
+	end)
+end
+
 config.key_tables = {
 	resize_panes = {
 		resize_pane("j", "Down"),
@@ -222,6 +275,42 @@ config.key_tables = {
 		resize_pane("h", "Left"),
 		resize_pane("l", "Right"),
 	},
+
+	copy_mode = extend_keys(default_keys.copy_mode, {
+		{ key = "c", mods = "CTRL", action = close_copy_mode() },
+		{ key = "q", mods = "NONE", action = close_copy_mode() },
+		{ key = "y", mods = "NONE", action = copy_to() },
+		{ key = "Escape", mods = "NONE", action = close_copy_mode() },
+		-- / to search forward (clears previous pattern)
+		{
+			key = "/",
+			mods = "NONE",
+			action = act.Multiple({
+				act.CopyMode("ClearPattern"),
+				act.Search({ CaseInSensitiveString = "" }),
+			}),
+		},
+		-- ? to search backward (SHIFT+/ on most keyboards)
+		{
+			key = "?",
+			mods = "NONE",
+			action = act.Multiple({
+				act.CopyMode("ClearPattern"),
+				act.Search({ CaseInSensitiveString = "" }),
+			}),
+		},
+		{ key = "p", mods = "CTRL", action = next_match(-1) },
+		{ key = "n", mods = "CTRL", action = next_match(1) },
+		{ key = "n", mods = "NONE", action = next_match(1) },
+		{ key = "N", mods = "SHIFT", action = next_match(-1) },
+	}),
+
+	search_mode = extend_keys(default_keys.search_mode, {
+		-- Escape cancels search and clears the pattern
+		{ key = "Escape", mods = "NONE", action = complete_search(true) },
+		-- Enter confirms search and returns to copy mode (no selection)
+		{ key = "Enter", mods = "NONE", action = complete_search(false) },
+	}),
 }
 
 config.tab_bar_at_bottom = true
@@ -231,12 +320,9 @@ config.show_new_tab_button_in_tab_bar = false
 
 local function tab_title(tab_info)
 	local title = tab_info.tab_title
-	-- if the tab title is explicitly set, take that
 	if title and #title > 0 then
 		return title
 	end
-	-- Otherwise, use the title from the active pane
-	-- in that tab
 	return tab_info.active_pane.title
 end
 
@@ -246,8 +332,6 @@ wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, _ma
 
 	local title = tab_title(tab)
 
-	-- ensure that the titles fit in the available space,
-	-- and that we have room for the edges.
 	local max = config.tab_max_width - 9
 	if #title > max then
 		title = wezterm.truncate_right(title, max) .. "…"
