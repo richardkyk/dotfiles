@@ -99,17 +99,31 @@ config.keys = {
 	-- for telling your shell to jump back/forward.
 	{
 		-- When the left arrow is pressed
-		key = "LeftArrow",
+		key = "h",
 		-- With the "Option" key modifier held down
-		mods = "OPT",
+		mods = "CTRL",
 		-- Perform this action, in this case - sending ESC + B
 		-- to the terminal
 		action = wezterm.action.SendString("\x1bb"),
 	},
 	{
-		key = "RightArrow",
-		mods = "OPT",
+		key = "l",
+		mods = "CTRL",
 		action = wezterm.action.SendString("\x1bf"),
+	},
+
+	-- JUMP TO START AND END OF LINE
+	{
+		-- Cmd + Left Arrow sends Ctrl + A (Start of line)
+		key = "LeftArrow",
+		mods = "SUPER", -- "SUPER" corresponds to the Command (Cmd) key on macOS
+		action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }),
+	},
+	{
+		-- Cmd + Right Arrow sends Ctrl + E (End of line)
+		key = "RightArrow",
+		mods = "SUPER",
+		action = wezterm.action.SendKey({ key = "e", mods = "CTRL" }),
 	},
 
 	{
