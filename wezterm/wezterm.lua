@@ -3,6 +3,8 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local projects = require("projects")
+local act = wezterm.action
+local default_keys = wezterm.gui.default_key_tables()
 
 local is_windows = function()
 	return wezterm.target_triple:find("windows") ~= nil
@@ -59,11 +61,36 @@ config.window_frame = {
 	font_size = 12,
 }
 
-local function move_pane(key, direction)
+local function is_vim(pane)
+	-- this is set by the plugin, and unset on ExitPre in Neovim
+	return pane:get_user_vars().IS_NVIM == "true"
+end
+
+local direction_keys = {
+	h = "Left",
+	j = "Down",
+	k = "Up",
+	l = "Right",
+}
+
+local function split_nav(resize_or_move, key)
 	return {
 		key = key,
-		mods = "LEADER",
-		action = wezterm.action.ActivatePaneDirection(direction),
+		mods = resize_or_move == "resize" and "META" or "CTRL",
+		action = wezterm.action_callback(function(win, pane)
+			if is_vim(pane) then
+				-- pass the keys through to vim/nvim
+				win:perform_action({
+					SendKey = { key = key, mods = resize_or_move == "resize" and "META" or "CTRL" },
+				}, pane)
+			else
+				if resize_or_move == "resize" then
+					win:perform_action({ AdjustPaneSize = { direction_keys[key], 3 } }, pane)
+				else
+					win:perform_action({ ActivatePaneDirection = direction_keys[key] }, pane)
+				end
+			end
+		end),
 	}
 end
 
@@ -150,11 +177,6 @@ config.keys = {
 		action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }),
 	},
 
-	move_pane("j", "Down"),
-	move_pane("k", "Up"),
-	move_pane("h", "Left"),
-	move_pane("l", "Right"),
-
 	{
 		key = "r",
 		mods = "LEADER",
@@ -186,6 +208,16 @@ config.keys = {
 		action = wezterm.action.CloseCurrentPane({ confirm = true }),
 	},
 
+	split_nav("move", "h"),
+	split_nav("move", "j"),
+	split_nav("move", "k"),
+	split_nav("move", "l"),
+
+	-- { key = "h", mods = "CTRL", action = smart_pane_move("h", "Left") },
+	-- { key = "j", mods = "CTRL", action = smart_pane_move("j", "Down") },
+	-- { key = "k", mods = "CTRL", action = smart_pane_move("k", "Up") },
+	-- { key = "l", mods = "CTRL", action = smart_pane_move("l", "Right") },
+
 	-- remapping the jk on osx
 	{ key = "j", mods = "CMD", action = wezterm.action_callback(bind_keys_in_nvim("j", "CTRL")) },
 	{ key = "k", mods = "CMD", action = wezterm.action_callback(bind_keys_in_nvim("k", "CTRL")) },
@@ -197,9 +229,6 @@ for i = 1, 8 do
 		action = wezterm.action.ActivateTab(i - 1),
 	})
 end
-
-local act = wezterm.action
-local default_keys = wezterm.gui.default_key_tables()
 
 -- Merges `source` into `target`, with source entries overriding any existing
 -- entries in target that share the same key+mods combination.
