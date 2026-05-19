@@ -790,7 +790,20 @@ require('lazy').setup({
         mason = {
           -- clangd = {},
           gopls = {},
-          pyright = {},
+          pyright = {
+            settings = {
+              pyright = {
+                disableTaggedHints = true,
+              },
+              diagnostics = {
+                reportUnusedImport = true,
+                reportUnusedClass = true,
+                reportUnusedFunction = true,
+                reportUnusedVariable = true,
+                reportDuplicateImport = true,
+              },
+            },
+          },
           ruff = {
             settings = {
               lint = false,
