@@ -213,11 +213,6 @@ config.keys = {
 	split_nav("move", "k"),
 	split_nav("move", "l"),
 
-	-- { key = "h", mods = "CTRL", action = smart_pane_move("h", "Left") },
-	-- { key = "j", mods = "CTRL", action = smart_pane_move("j", "Down") },
-	-- { key = "k", mods = "CTRL", action = smart_pane_move("k", "Up") },
-	-- { key = "l", mods = "CTRL", action = smart_pane_move("l", "Right") },
-
 	-- remapping the jk on osx
 	{ key = "j", mods = "CMD", action = wezterm.action_callback(bind_keys_in_nvim("j", "CTRL")) },
 	{ key = "k", mods = "CMD", action = wezterm.action_callback(bind_keys_in_nvim("k", "CTRL")) },
