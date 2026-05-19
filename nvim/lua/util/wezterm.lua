@@ -31,6 +31,10 @@ end
 
 function M.setup()
   set_user_var('IS_NVIM', true)
+  -- Clear IS_NVIM when nvim exits so WezTerm stops treating the pane as nvim
+  vim.api.nvim_create_autocmd('ExitPre', {
+    callback = function() set_user_var('IS_NVIM', false) end,
+  })
   for key, dir in pairs(nav) do
     vim.keymap.set('n', '<' .. dir .. '>', navigate(key), { desc = 'Go to ' .. dir .. ' window' })
     vim.keymap.set('n', '<C-' .. key .. '>', navigate(key), { desc = 'Go to ' .. dir .. ' window' })
