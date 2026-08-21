@@ -44,7 +44,7 @@ local main_font = wezterm.font_with_fallback({
 
 config.window_padding = { bottom = 0, top = 0, left = 0, right = 0 }
 config.font = main_font
-config.font_size = 12
+config.font_size = 14.5
 
 -- Slightly transparent and blurred background
 -- config.window_background_opacity = 0.9
@@ -216,6 +216,9 @@ config.keys = {
 	-- remapping the jk on osx
 	{ key = "j", mods = "CMD", action = wezterm.action_callback(bind_keys_in_nvim("j", "CTRL")) },
 	{ key = "k", mods = "CMD", action = wezterm.action_callback(bind_keys_in_nvim("k", "CTRL")) },
+
+	-- the default binds CMD+9 to the last tab, not tab 9
+	{ key = "9", mods = "CMD", action = wezterm.action.ActivateTab(8) },
 }
 for i = 1, 8 do
 	table.insert(config.keys, {
