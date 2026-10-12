@@ -250,6 +250,20 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+-- Plain terminal buffers: relative numbers + folds over a large scrollback
+-- once left a headless nvim spinning at 100% CPU for days
+vim.api.nvim_create_autocmd('TermOpen', {
+  desc = 'Disable line numbers and folds in terminal buffers',
+  group = vim.api.nvim_create_augroup('kickstart-term-open', { clear = true }),
+  callback = function()
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+    vim.opt_local.foldenable = false
+    vim.opt_local.foldcolumn = '0'
+    vim.opt_local.signcolumn = 'no'
+  end,
+})
+
 -- Restore cursor position on file open
 vim.api.nvim_create_autocmd('BufReadPost', {
   desc = 'Restore cursor position on file open',

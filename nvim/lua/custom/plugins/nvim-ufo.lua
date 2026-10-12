@@ -8,6 +8,7 @@ return {
         local builtin = require 'statuscol.builtin'
         require('statuscol').setup {
           relculright = true,
+          bt_ignore = { 'terminal' },
           segments = {
             { text = { '%s' }, click = 'v:lua.ScSa' },
             { text = { builtin.lnumfunc, ' ' }, click = 'v:lua.ScLa' },
@@ -24,6 +25,10 @@ return {
   },
   event = 'BufReadPost',
   opts = {
-    provider_selector = function() return { 'treesitter', 'indent' } end,
+    provider_selector = function(_, _, buftype)
+      -- No folds in terminals: recomputing them on streaming output can peg the CPU
+      if buftype == 'terminal' then return '' end
+      return { 'treesitter', 'indent' }
+    end,
   },
 }
