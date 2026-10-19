@@ -20,7 +20,16 @@ This will create a symlinks from `~/.config` to the folder for the repo.
 
 ### macOS
 ```bash
-ln -sf ~/Developer/dotfiles/hammerspoon ~/.hammerspoon
+link() {
+    # move a real folder aside first, otherwise ln drops the link inside it
+    if [ -e "$2" ] && [ ! -L "$2" ]; then mv "$2" "$2.old"; fi
+    ln -sfn "$1" "$2"
+}
+mkdir -p ~/.config
+link ~/Developer/dotfiles/hammerspoon ~/.hammerspoon
 # link the whole directory, karabiner stops watching karabiner.json if the file itself is a symlink
-ln -sf ~/Developer/dotfiles/karabiner ~/.config/karabiner
+link ~/Developer/dotfiles/karabiner ~/.config/karabiner
+# bin/ isn't in git, carry it over from the old folder
+[ -d ~/.hammerspoon.old/bin ] && cp -a ~/.hammerspoon.old/bin ~/Developer/dotfiles/hammerspoon/
 ```
+Reload Hammerspoon, check everything works, then delete the `.old` folders.
