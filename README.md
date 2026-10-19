@@ -17,3 +17,10 @@ ln -sf ~/Developer/dotfiles/wezterm ~/.config/wezterm
 ln -sf ~/Developer/dotfiles/.zshrc ~/.zshrc
 ```
 This will create a symlinks from `~/.config` to the folder for the repo.
+
+### macOS
+```bash
+ln -sf ~/Developer/dotfiles/hammerspoon ~/.hammerspoon
+# link the whole directory, karabiner stops watching karabiner.json if the file itself is a symlink
+ln -sf ~/Developer/dotfiles/karabiner ~/.config/karabiner
+```
