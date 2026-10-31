@@ -33,3 +33,11 @@ link ~/Developer/dotfiles/karabiner ~/.config/karabiner
 [ -d ~/.hammerspoon.old/bin ] && cp -a ~/.hammerspoon.old/bin ~/Developer/dotfiles/hammerspoon/
 ```
 Reload Hammerspoon, check everything works, then delete the `.old` folders.
+
+### Vorssaint
+Its settings live in `~/Library/Preferences/com.vorssaint.utils.plist`, which macOS (cfprefsd) caches and rewrites, so a symlink gets replaced. Export/import instead:
+```bash
+~/Developer/dotfiles/vorssaint/sync.sh export   # after changing settings, then commit
+~/Developer/dotfiles/vorssaint/sync.sh import   # on a new mac, with Vorssaint quit
+```
+Clipboard history and app usage stats aren't backed up.
